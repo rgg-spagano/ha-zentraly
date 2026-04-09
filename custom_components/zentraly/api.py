@@ -35,12 +35,12 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 _FIREBASE_HEADER_TEMPLATE = {
-    "ivstrUserFBToken": "ha_zentraly_integration",
-    "ivstrUserGuid": "ha_zentraly_integration",
+    "ivstrUserFBToken": "ha_token",
+    "ivstrUserGuid": "ha_token",
     "ivstrUserZtVersion": "6.3.0",
     "ivnroUserMobileOS": 2,
     "ivstrUserMobileTrade": "apple",
-    "ivstrUserMobileModel": "HomeAssistant",
+    "ivstrUserMobileModel": "iPhone",
     "ivstrUserMobileOSVersion": 17,
     "ivstrUserLanguage": "es",
 }
