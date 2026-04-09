@@ -1,0 +1,58 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurar Zentraly",
+        "description": "Ingresá las credenciales de tu cuenta Zentraly.",
+        "data": {
+          "email": "Email",
+          "password": "Contraseña"
+        }
+      },
+      "device": {
+        "title": "Seleccionar termostato",
+        "description": "Elegí el termostato que querés integrar.",
+        "data": {
+          "device_id": "Dispositivo"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "No se pudo conectar con la API de Zentraly. Verificá tu red.",
+      "invalid_auth": "Email o contraseña incorrectos.",
+      "unknown": "Error inesperado. Revisá los logs para más detalles."
+    },
+    "abort": {
+      "already_configured": "Este dispositivo ya está configurado."
+    }
+  },
+  "entity": {
+    "climate": {
+      "zentraly": {
+        "state": {
+          "off": "Apagado",
+          "heat": "Calefacción",
+          "cool": "Refrigeración",
+          "auto": "Automático"
+        },
+        "state_attributes": {
+          "humidity": {
+            "name": "Humedad"
+          },
+          "rssi": {
+            "name": "Intensidad de señal"
+          },
+          "firmware_version": {
+            "name": "Versión de firmware"
+          },
+          "output": {
+            "name": "Caldera activa"
+          },
+          "away_temperature": {
+            "name": "Temperatura ausente"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Zentraly",
+        "description": "Enter the credentials for your Zentraly account.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      },
+      "device": {
+        "title": "Select thermostat",
+        "description": "Choose the thermostat you want to integrate.",
+        "data": {
+          "device_id": "Device"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to the Zentraly API. Check your network.",
+      "invalid_auth": "Invalid email or password.",
+      "unknown": "Unexpected error. Check the logs for details."
+    },
+    "abort": {
+      "already_configured": "This device is already configured."
+    }
+  }
+}

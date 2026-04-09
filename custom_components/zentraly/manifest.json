@@ -1,0 +1,12 @@
+{
+  "domain": "zentraly",
+  "name": "Zentraly",
+  "version": "1.0.0",
+  "documentation": "https://github.com/sebastianpagano/zentraly",
+  "issue_tracker": "https://github.com/sebastianpagano/zentraly/issues",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": [],
+  "iot_class": "cloud_polling",
+  "config_flow": true
+}
