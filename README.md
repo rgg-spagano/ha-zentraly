@@ -1,7 +1,7 @@
 # Zentraly – Home Assistant Integration
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-[![GitHub release](https://img.shields.io/github/release/sebastianpagano/ha-zentraly.svg)](https://github.com/sebastianpagano/ha-zentraly/releases)
+[![GitHub release](https://img.shields.io/github/release/rgg-spagano/ha-zentraly.svg)](https://github.com/rgg-spagano/ha-zentraly/releases)
 
 Custom integration for [Home Assistant](https://www.home-assistant.io/) to control **Zentraly WiFi thermostats** (boiler controllers).
 
@@ -26,7 +26,7 @@ Supports reading temperature, humidity, and boiler state, as well as setting the
 
 1. Open HACS in Home Assistant
 2. Go to **Integrations → ⋮ → Custom repositories**
-3. Add `https://github.com/sebastianpagano/ha-zentraly` — category **Integration**
+3. Add `https://github.com/rgg-spagano/ha-zentraly` — category **Integration**
 4. Search for **Zentraly** and install
 5. Restart Home Assistant
 
