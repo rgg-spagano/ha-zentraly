@@ -9,3 +9,5 @@ venv/
 dist/
 build/
 .pytest_cache/
+default/
+stress_fans.py
