@@ -1,12 +1,12 @@
 {
   "domain": "zentraly",
   "name": "Zentraly",
-  "version": "1.0.0",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": [],
   "documentation": "https://github.com/rgg-spagano/ha-zentraly",
+  "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/rgg-spagano/ha-zentraly/issues",
   "requirements": [],
-  "dependencies": [],
-  "codeowners": [],
-  "iot_class": "cloud_polling",
-  "config_flow": true
+  "version": "1.0.4"
 }
