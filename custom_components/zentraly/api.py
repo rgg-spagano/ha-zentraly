@@ -38,12 +38,18 @@ _FIREBASE_HEADER_TEMPLATE = {
     "ivstrUserFBToken": "ha_token",
     "ivstrUserGuid": "ha_token",
     "ivstrUserZtVersion": "6.3.0",
-    "ivnroUserMobileOS": 2,
+    "ivnroUserMobileOS": 1,          # 1 = iOS, 2 = Android
     "ivstrUserMobileTrade": "apple",
-    "ivstrUserMobileModel": "iPhone",
+    "ivstrUserMobileModel": "iPhone14,3",  # iPhone 13 Pro Max
     "ivstrUserMobileOSVersion": 17,
     "ivstrUserLanguage": "es",
 }
+
+# iOS app uses CFNetwork / NSURLSession, not okhttp
+_IOS_USER_AGENT = (
+    "Zentraly/6.3.0 (com.kotlin.zentraly; build:1; iOS 17.4.1)"
+    " CFNetwork/1494.0.7 Darwin/23.4.0"
+)
 
 
 def _make_firebase_header() -> str:
@@ -94,9 +100,10 @@ class ZentralyAPI:
         return {
             "Accept": "application/json",
             "Content-Type": "application/json",
+            "Accept-Language": "es-AR;q=1.0, en-AR;q=0.9",
             "firebase": self._firebase_header,
             "authorization": auth_token or f"ztv2Auth{self._email}:{self._password}",
-            "User-Agent": "okhttp/4.9.2",
+            "User-Agent": _IOS_USER_AGENT,
         }
 
     def login(self) -> dict:
