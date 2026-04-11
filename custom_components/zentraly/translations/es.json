@@ -23,7 +23,8 @@
       "unknown": "Error inesperado. Revisá los logs para más detalles."
     },
     "abort": {
-      "already_configured": "Este dispositivo ya está configurado."
+      "already_configured": "Este dispositivo ya está configurado.",
+      "reauth_successful": "La reautenticación fue exitosa."
     }
   },
   "entity": {

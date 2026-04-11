@@ -59,7 +59,10 @@ def _request(url: str, *, method: str = "GET", headers: dict, body: Optional[dic
         with urllib.request.urlopen(req, timeout=20) as resp:
             return json.loads(resp.read())
     except urllib.error.HTTPError as exc:
-        raise ZentralyAuthError(f"HTTP {exc.code}: {exc.read().decode(errors='ignore')[:200]}") from exc
+        body_text = exc.read().decode(errors="ignore")[:200]
+        if exc.code in (401, 403):
+            raise ZentralyAuthError(f"HTTP {exc.code}: {body_text}") from exc
+        raise ZentralyConnectionError(f"HTTP {exc.code}: {body_text}") from exc
     except Exception as exc:
         raise ZentralyConnectionError(str(exc)) from exc
 
