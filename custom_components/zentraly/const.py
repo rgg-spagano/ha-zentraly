@@ -7,7 +7,7 @@ LOGIN_URL = f"{BASE_URL}/Login"
 APP_URL = f"{BASE_URL}/App"
 IOT_COMMAND_URL = f"{BASE_URL}/IOTCommand/Run"
 
-DEFAULT_SCAN_INTERVAL = 30  # seconds
+DEFAULT_SCAN_INTERVAL = 60  # seconds — IoT command goes all the way to the physical device
 COMMAND_TIMEOUT = 15000  # ms, sent to the thermostat
 
 # thermostatMode values observed via MITM

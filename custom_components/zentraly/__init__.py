@@ -17,6 +17,9 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = [Platform.CLIMATE]
 
+# How many consecutive failures before marking as unavailable
+_MAX_FAILURES = 3
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Zentraly from a config entry."""
@@ -26,12 +29,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
     device_id = entry.data[CONF_DEVICE_ID]
 
+    _last_good_state: dict = {}
+    _failure_count: list[int] = [0]  # mutable container for closure
+
     async def async_update_data() -> dict:
+        nonlocal _last_good_state
         try:
-            return await hass.async_add_executor_job(api.get_state, device_id)
+            state = await hass.async_add_executor_job(api.get_state, device_id)
+            _last_good_state = state
+            _failure_count[0] = 0
+            return state
         except ZentralyAuthError as exc:
             raise ConfigEntryAuthFailed(str(exc)) from exc
         except ZentralyConnectionError as exc:
+            _failure_count[0] += 1
+            if _failure_count[0] < _MAX_FAILURES and _last_good_state:
+                # Thermostat temporarily unreachable — return last known state
+                _LOGGER.warning(
+                    "Zentraly: thermostat unreachable (attempt %d/%d), using last known state",
+                    _failure_count[0],
+                    _MAX_FAILURES,
+                )
+                return _last_good_state
             raise UpdateFailed(str(exc)) from exc
 
     coordinator = DataUpdateCoordinator(
