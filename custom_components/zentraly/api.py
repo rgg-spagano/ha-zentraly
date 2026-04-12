@@ -131,6 +131,11 @@ class ZentralyAPI:
             return f"ztv2Token{self._token}"
         return f"ztv2Auth{self._email}:{self._password}"
 
+    def invalidate_token(self) -> None:
+        """Force re-login on the next request."""
+        self._token = None
+        self._token_expires = datetime.min
+
     def ensure_authenticated(self) -> None:
         """Re-login if token is missing or expired."""
         if not self._token or datetime.now() >= self._token_expires:
@@ -205,7 +210,13 @@ class ZentralyAPI:
             headers=self._common_headers(auth_token=self._auth_token_header()),
             body=body,
         )
-        if result.get("numStatus") != 0:
+        num_status = result.get("numStatus")
+        if num_status in (1, 2):
+            # Token rejected server-side: invalidate so next cycle re-logins automatically.
+            # Raise ConnectionError (not AuthError) to avoid triggering the HA re-auth UI.
+            self.invalidate_token()
+            raise ZentralyConnectionError(f"getConfig token rejected (numStatus={num_status}), will re-login next cycle")
+        if num_status != 0:
             raise ZentralyConnectionError(f"getConfig failed: {result}")
 
         raw_io = result.get("ioData", "{}")
@@ -250,6 +261,10 @@ class ZentralyAPI:
             headers=self._common_headers(auth_token=self._auth_token_header()),
             body=body,
         )
+        num_status = result.get("numStatus")
+        if num_status in (1, 2):
+            self.invalidate_token()
+            raise ZentralyConnectionError(f"setConfig token rejected (numStatus={num_status}), will re-login next cycle")
         inner = result.get("ioData", "{}")
         if isinstance(inner, str):
             inner = json.loads(inner)
