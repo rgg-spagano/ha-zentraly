@@ -151,6 +151,15 @@ class ZentralyClimate(CoordinatorEntity, ClimateEntity):
             attrs[ATTR_OUTPUT] = bool(output)
         if (away := self._state.get("away_temp")) is not None:
             attrs[ATTR_AWAY_TEMP] = away
+
+        # Connection status — useful for automations and dashboards
+        # is_connected: True = online, False = IoT Hub offline, None = transient error
+        connected = self._state.get("is_connected")
+        if connected is not None:
+            attrs[ATTR_CONNECTED] = connected
+        if (offline_since := self._state.get("offline_since")) is not None:
+            attrs["offline_since"] = offline_since
+
         return attrs
 
     async def async_set_temperature(self, **kwargs: Any) -> None:

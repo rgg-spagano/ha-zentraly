@@ -81,6 +81,15 @@ class ZentralyConnectionError(Exception):
     """Network or connection error."""
 
 
+class ZentralyDeviceOfflineError(ZentralyConnectionError):
+    """Device is not connected to Azure IoT Hub (numStatus=6).
+
+    Distinct from generic connection errors so the coordinator can apply
+    specific watchdog logic (auto-reset) without reacting the same way to
+    transient network blips.
+    """
+
+
 class ZentralyAPI:
     """Client for the Zentraly REST API."""
 
@@ -216,6 +225,10 @@ class ZentralyAPI:
             # Raise ConnectionError (not AuthError) to avoid triggering the HA re-auth UI.
             self.invalidate_token()
             raise ZentralyConnectionError(f"getConfig token rejected (numStatus={num_status}), will re-login next cycle")
+        if num_status == 6:
+            # Device offline: not connected to Azure IoT Hub.
+            # Raised as a specific subclass so the coordinator can apply watchdog logic.
+            raise ZentralyDeviceOfflineError(f"Device {device_id} is offline (numStatus=6)")
         if num_status != 0:
             raise ZentralyConnectionError(f"getConfig failed: {result}")
 
@@ -281,3 +294,51 @@ class ZentralyAPI:
         """Set thermostatMode (0=off, 4=manual/heat, etc.)."""
         _LOGGER.debug("set_hvac_mode %s → mode %d", device_id, mode)
         self._set_config(device_id, {"thermostatMode": mode})
+
+    def reset_device(self, device_id: str) -> bool:
+        """Send a reset command to the device.
+
+        The reset command causes the ESP32 to reboot, which forces it to
+        generate a fresh Azure IoT Hub SAS token and reconnect.  This is
+        the software equivalent of a power cycle.
+
+        The command is accepted even when the device appears offline because
+        Zentraly's backend queues it as a Cloud-to-Device message; the
+        device receives it as soon as it briefly re-establishes the MQTT
+        connection (or on the next boot attempt).
+
+        Returns True if the backend confirmed the command was accepted.
+        """
+        self.ensure_authenticated()
+        body = {
+            "deviceId": device_id,
+            "timeOut": COMMAND_TIMEOUT,
+            "data": {
+                "cmd": "reset",
+                "rid": 0,
+                "ids": [{}],
+            },
+        }
+        try:
+            result = _request(
+                IOT_COMMAND_URL,
+                method="POST",
+                headers=self._common_headers(auth_token=self._auth_token_header()),
+                body=body,
+            )
+        except ZentralyConnectionError:
+            return False
+
+        num_status = result.get("numStatus")
+        if num_status in (1, 2):
+            self.invalidate_token()
+            return False
+        inner = result.get("ioData", "{}")
+        if isinstance(inner, str):
+            try:
+                inner = json.loads(inner)
+            except (ValueError, TypeError):
+                inner = {}
+        accepted = num_status == 0 and isinstance(inner, dict) and inner.get("status") == 200
+        _LOGGER.debug("reset_device %s → accepted=%s result=%s", device_id, accepted, result)
+        return accepted
