@@ -24,7 +24,7 @@ _STORAGE_VERSION = 1
 # before the 12-hour SAS token expiry disconnects it.
 # At 11 h we reset with 1 h of margin — the device reboots (~30 s), reconnects
 # with a fresh token, and stays online indefinitely.
-_PROACTIVE_RESET_INTERVAL = timedelta(hours=10)
+_PROACTIVE_RESET_INTERVAL = timedelta(hours=4)
 
 # Reactive watchdog: last resort when the device already went offline.
 # Only works if the device can still receive commands (e.g. brief glitch, not
